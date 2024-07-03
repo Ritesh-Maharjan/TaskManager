@@ -2,17 +2,48 @@
 import Droppable from "@/components/Droppable";
 import MaxWidthContainer from "@/components/MaxWidthContainer";
 import { PlusCircledIcon } from "@radix-ui/react-icons";
-import React from "react";
-import { DndContext } from "@dnd-kit/core";
+import React, { act } from "react";
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { getProjectById } from "@/actions/project/project";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ProjectProvider } from "@/providers/ProjectProvider";
+import { updateTask } from "@/actions/task/task";
+import { TaskStatus } from "@prisma/client";
 
 type PageProps = {
   params: { id: string };
 };
 const page = ({ params }: PageProps) => {
   const { id } = params;
+  const queryClient = useQueryClient();
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over) return;
+
+    const task = project?.Tasks.find((task) => task.id === active.id);
+
+    if (task?.status === over.id) return;
+
+    const res = await updateTask(active.id as string, over.id as TaskStatus);
+
+    if (res) {
+      // Invalidate and refetch the query
+      queryClient.invalidateQueries({
+        queryKey: ["get-task-by-ToDo"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["get-task-by-Ongoing"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["get-task-by-Completed"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["get-projects-by-id"],
+      });
+    }
+  };
 
   const {
     isPending,
@@ -52,11 +83,11 @@ const page = ({ params }: PageProps) => {
           </div>
         </header>
 
-        <DndContext>
+        <DndContext onDragEnd={handleDragEnd}>
           <main className="flex gap-2">
-            <Droppable id="ToDo" label="To Do" />
-            <Droppable id="Ongoing" label="Ongoing" />
-            <Droppable id="Completed" label="Completed" />
+            <Droppable id={TaskStatus.ToDo} label="To Do" />
+            <Droppable id={TaskStatus.Ongoing} label="Ongoing" />
+            <Droppable id={TaskStatus.Completed} label="Completed" />
           </main>
         </DndContext>
       </MaxWidthContainer>

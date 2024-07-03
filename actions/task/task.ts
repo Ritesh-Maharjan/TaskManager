@@ -42,12 +42,29 @@ export const fetchTaskByStatus = async (
   status: TaskStatus,
   projectId: string
 ) => {
-  console.log(status);
   try {
     const res = await db.tasks.findMany({
       where: {
         status,
         projectId,
+      },
+    });
+
+    return res;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+};
+
+export const updateTask = async (id: string, status: TaskStatus) => {
+  try {
+    const res = await db.tasks.update({
+      where: {
+        id,
+      },
+      data: {
+        status,
       },
     });
 

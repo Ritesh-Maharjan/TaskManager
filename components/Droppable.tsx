@@ -14,6 +14,7 @@ import { TaskStatus } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { fetchTaskByStatus } from "@/actions/task/task";
 import { useProject } from "@/providers/ProjectProvider";
+import Draggable from "./Draggable";
 
 function Droppable({ id, label }: { id: TaskStatus; label: string }) {
   const { setNodeRef } = useDroppable({
@@ -36,9 +37,7 @@ function Droppable({ id, label }: { id: TaskStatus; label: string }) {
       <div className="bg-gray-500 flex flex-col gap-2 rounded-md p-4">
         {data?.map((el) => {
           return (
-            <span className="border text-center p-2 rounded-sm" key={el.id}>
-              {el.title}
-            </span>
+            <Draggable key={el.id} task={el} />
           );
         })}
         <Dialog open={open} onOpenChange={setOpen}>
