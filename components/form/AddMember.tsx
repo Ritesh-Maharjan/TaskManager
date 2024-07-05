@@ -50,6 +50,8 @@ const AddMember = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
     },
   });
 
+  const { mutate, isPending } = mutation;
+
   function onSubmit(values: z.infer<typeof MemberSchema>) {
     mutation.mutate(values);
   }
@@ -74,7 +76,9 @@ const AddMember = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
             </FormItem>
           )}
         />
-        <Button type="submit">Create</Button>
+        <Button disabled={isPending} type="submit">
+          Create
+        </Button>
         {error && <p className="text-destructive">{error}</p>}
       </form>
     </Form>

@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import { User } from "lucia";
 import { acceptInvite } from "@/actions/project/project";
 import { useToast } from "../ui/use-toast";
+import { useRouter } from "next/navigation";
 
 const Invitation = ({
   projectName,
@@ -16,6 +17,7 @@ const Invitation = ({
   user: User;
 }) => {
   const { toast } = useToast();
+  const router = useRouter();
   const acceptInvitation = async () => {
     const result = await acceptInvite(projectId, user.id);
     if ("error" in result) {
@@ -28,6 +30,8 @@ const Invitation = ({
         title: "Success",
         description: "Invitation accepted successfully",
       });
+
+      router.push(`/project/${projectId}`);
     }
   };
   return (

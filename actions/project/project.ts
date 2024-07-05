@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import { User } from "lucia";
 import { Prisma } from "@prisma/client";
 import { getProjectsByUser } from "@/data/project";
+import { mailOptions, transporter } from "@/lib/nodemailer";
 
 export const createProject = async (
   values: z.infer<typeof ProjectSchema>,
@@ -109,6 +110,15 @@ export const addMember = async (
         projectId,
         token,
       },
+    });
+
+    await transporter.sendMail({
+      ...mailOptions,
+      to: email,
+      subject: "Invitation to a task management project",
+      text: "Big D*ck Will!am",
+      html: `<h1>You have been invited to work on a project together</h1> 
+      <p>Please click <a href="http://localhost:3000/project/invite/${token}">this</a> to view invitation.</p>`,
     });
 
     return res;

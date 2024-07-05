@@ -83,7 +83,7 @@ const page = ({ params }: PageProps) => {
           <h1>{project.name}</h1>
           <div className="flex items-center gap-1">
             {/* Add New member */}
-            <Dialog>
+            <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
                 <div className="relative group w-fit">
                   <PlusCircledIcon className="hover:text-gray-700 cursor-pointer" />
