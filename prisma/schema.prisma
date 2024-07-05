@@ -50,7 +50,6 @@ model Project {
 
 model Invitation {
   id        String  @id @default(cuid())
-  email     String
   projectId String
   project   Project @relation(fields: [projectId], references: [id])
   token     String

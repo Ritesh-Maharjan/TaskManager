@@ -40,7 +40,7 @@ const page = () => {
         <div className="grid grid-cols-3 gap-4">
           {data.map((project) => {
             return (
-              <Link href={`project/${project.id}`}>
+              <Link key={project.id} href={`project/${project.id}`}>
                 <Card
                   className="hover:shadow-lg cursor-pointer"
                   key={project.id}

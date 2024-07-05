@@ -22,7 +22,6 @@ function Droppable({ id, label }: { id: TaskStatus; label: string }) {
   });
   const [open, setOpen] = useState(false);
   const projectId = useProject();
-  console.log(projectId);
 
   const { isPending, isError, data } = useQuery({
     queryKey: [`get-task-by-${id}`],

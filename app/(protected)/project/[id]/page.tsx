@@ -2,19 +2,28 @@
 import Droppable from "@/components/Droppable";
 import MaxWidthContainer from "@/components/MaxWidthContainer";
 import { PlusCircledIcon } from "@radix-ui/react-icons";
-import React, { act } from "react";
+import React, { act, useState } from "react";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { getProjectById } from "@/actions/project/project";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ProjectProvider } from "@/providers/ProjectProvider";
 import { updateTask } from "@/actions/task/task";
 import { TaskStatus } from "@prisma/client";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import AddMember from "@/components/form/AddMember";
 
 type PageProps = {
   params: { id: string };
 };
 const page = ({ params }: PageProps) => {
   const { id } = params;
+  const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -73,12 +82,22 @@ const page = ({ params }: PageProps) => {
         <header className="flex justify-between">
           <h1>{project.name}</h1>
           <div className="flex items-center gap-1">
-            <div className="relative group w-fit">
-              <PlusCircledIcon className="hover:text-gray-700 cursor-pointer" />
-              <div className="absolute pointer-events-none left-1/2 transform -translate-x-1/2 top-full mt-2 w-max px-2 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                Add new item
-              </div>
-            </div>
+            {/* Add New member */}
+            <Dialog>
+              <DialogTrigger asChild>
+                <div className="relative group w-fit">
+                  <PlusCircledIcon className="hover:text-gray-700 cursor-pointer" />
+                  <div className="absolute pointer-events-none left-1/2 transform -translate-x-1/2 top-full mt-2 w-max px-2 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    Add new Member
+                  </div>
+                </div>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogTitle>Create Project</DialogTitle>
+                <DialogDescription className="sr-only"></DialogDescription>
+                <AddMember setOpen={setOpen} />
+              </DialogContent>
+            </Dialog>
             {(project?._count.ProjectMembers ?? 0) + 1} Members
           </div>
         </header>

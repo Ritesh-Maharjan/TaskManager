@@ -1,7 +1,7 @@
 "use server";
 import { validateRequest } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { ProjectSchema } from "@/schema";
+import { MemberSchema, ProjectSchema } from "@/schema";
 import * as z from "zod";
 import jwt from "jsonwebtoken";
 import { User } from "lucia";
@@ -76,15 +76,65 @@ export const getProjectById = async (id: string) => {
   return project;
 };
 
-// const code = Math.random().toString(36).substring(2, 8);
+export const addMember = async (
+  projectId: string,
+  user: User,
+  values: z.infer<typeof MemberSchema>
+) => {
+  const validatedFields = MemberSchema.safeParse(values);
 
-// const token = jwt.sign(
-//   {
-//     email: user.email,
-//     code,
-//   },
-//   process.env.JWT_SECRET!,
-//   {
-//     expiresIn: "1d",
-//   }
-// );
+  if (!validatedFields.success) {
+    // If validation is unsuccessful,
+    return { error: "Invalid fields" };
+  }
+
+  // const res = await validateRequest();
+  // console.log(res);
+
+  const { email } = validatedFields.data;
+
+  const token = jwt.sign(
+    {
+      email,
+    },
+    process.env.JWT_SECRET!,
+    {
+      expiresIn: "1d",
+    }
+  );
+
+  try {
+    const res = await db.invitation.create({
+      data: {
+        projectId,
+        token,
+      },
+    });
+
+    return res;
+  } catch (err) {
+    console.log(err);
+    return { error: "Something went wrong, Please try again later" };
+  }
+};
+
+export const acceptInvite = async (id: string, userId: string) => {
+  try {
+    const invitation = await db.project.update({
+      where: {
+        id,
+      },
+      data: {
+        ProjectMembers: {
+          create: {
+            userId,
+          },
+        },
+      },
+    });
+    return invitation;
+  } catch (err) {
+    console.log(err);
+    return { error: "Something went wrong, Please try again later" };
+  }
+};

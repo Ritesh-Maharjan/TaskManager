@@ -28,3 +28,7 @@ export const TaskSchema = z.object({
     .string()
     .min(3, { message: "Task title must be minimum of 3 character" }),
 });
+
+export const MemberSchema = z.object({
+  email: z.string().email(),
+});
