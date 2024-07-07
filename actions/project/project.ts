@@ -6,7 +6,6 @@ import * as z from "zod";
 import jwt from "jsonwebtoken";
 import { User } from "lucia";
 import { Prisma } from "@prisma/client";
-import { getProjectsByUser } from "@/data/project";
 import { mailOptions, transporter } from "@/lib/nodemailer";
 
 export const createProject = async (
@@ -51,12 +50,35 @@ export const createProject = async (
 
 export const getProjects = async (user: User) => {
   const { id } = user;
+  try {
+    const projects = await db.project.findMany({
+      where: {
+        OR: [
+          { userId: id },
+          {
+            ProjectMembers: {
+              some: {
+                userId: id,
+              },
+            },
+          },
+        ],
+      },
+      include: {
+        _count: {
+          select: {
+            ProjectMembers: true,
+            Tasks: true,
+          },
+        },
+      },
+    });
 
-  const projects = await getProjectsByUser(id);
-
-  if (!projects || projects.length === 0) return null;
-
-  return projects;
+    console.log(projects);
+    return projects;
+  } catch (err) {
+    return null;
+  }
 };
 
 export const getProjectById = async (id: string) => {
