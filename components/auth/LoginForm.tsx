@@ -19,6 +19,7 @@ import {
 import { Input } from "../ui/input";
 import { login } from "@/actions/auth/login";
 import { useRouter } from "next/navigation";
+import { CircleIcon } from "@radix-ui/react-icons";
 
 const LoginForm = () => {
   const [isPending, startTransition] = useTransition();

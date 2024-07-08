@@ -9,11 +9,15 @@ export async function middleware(request: NextRequest) {
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
+  if (nextUrl.pathname === "/" && isLoggedIn) {
+    return Response.redirect(new URL("/project", nextUrl));
+  }
+
   // checking the routes whether we are going to the authentication page
   if (isAuthRoute) {
     // if already logged in make it so that we are unable to go to the authntication page
     if (isLoggedIn) {
-      return Response.redirect(new URL("/settings", nextUrl));
+      return Response.redirect(new URL("/project", nextUrl));
     }
     return null;
   }
