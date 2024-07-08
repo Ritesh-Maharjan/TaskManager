@@ -4,11 +4,16 @@ import bcrypt from "bcryptjs";
 import { LoginSchema } from "@/schema/index";
 import { getUserByEmail } from "@/data/user";
 import { lucia } from "@/lib/auth";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 export const login = async (values: z.infer<typeof LoginSchema>) => {
   const validatedFields = LoginSchema.safeParse(values);
+
+  const headersList = headers();
+  const referer = headersList.get("referer"); // Get the full URL from the referer header
+  const url = new URL(referer!); // conver the full url from string to url
+  const searchParams = new URLSearchParams(url.search); // grabs the search params
 
   if (!validatedFields.success) {
     // If validation is successful, safeParse returns an object with success: true and the data
@@ -40,5 +45,10 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
     sessionCookie.attributes
   );
 
-  return redirect("/project");
+  // if user come from different url, go to that url else go to our projects
+  if (searchParams.get("next")) {
+    return redirect(`/project/invite/${searchParams.get("next")}`);
+  } else {
+    return redirect("/project");
+  }
 };

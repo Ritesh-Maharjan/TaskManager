@@ -2,6 +2,7 @@
 import Invitation from "@/components/project/Invitation";
 import { validateRequest } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { redirect } from "next/navigation";
 import React from "react";
 
 const page = async ({ params }: any) => {
@@ -11,7 +12,7 @@ const page = async ({ params }: any) => {
   }
   const { user } = await validateRequest();
 
-  if (!user) return <div>Please login</div>;
+  if (!user) redirect(`/auth/login?next=${id}`);
 
   try {
     const res = await db.invitation.findFirst({
@@ -30,7 +31,7 @@ const page = async ({ params }: any) => {
           ProjectMembers: true,
         },
       });
-      
+
       const userExists = project?.ProjectMembers.find(
         (member) => member.userId === user.id
       );

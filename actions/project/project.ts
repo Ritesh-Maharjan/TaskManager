@@ -74,7 +74,6 @@ export const getProjects = async (user: User) => {
       },
     });
 
-    console.log(projects);
     return projects;
   } catch (err) {
     return null;
