@@ -13,6 +13,7 @@ import Tooltip from "../Tooltip";
 import UpdateProject from "../form/UpdateProject";
 import { deleteProjectById } from "@/actions/project/project";
 import { useToast } from "../ui/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Project {
   _count: {
@@ -32,6 +33,7 @@ interface ChildFormRef {
 const Project = ({ project }: { project: Project }) => {
   const childRef = useRef<ChildFormRef>(null);
   const [editStatus, setEditStatus] = useState(false);
+  const queryClient = useQueryClient();
   const { toast } = useToast();
 
   const changeHeading = (e: React.MouseEvent<SVGElement>) => {
@@ -52,9 +54,10 @@ const Project = ({ project }: { project: Project }) => {
     const result = await deleteProjectById(project.id);
 
     if (result?.error) {
-      toast({ title: "Error", description: result.error });
+      toast({ title: result.error });
     } else {
-      toast({ title: "success", description: "Successfully deleted" });
+      await queryClient.invalidateQueries({ queryKey: ["get-projects"] });
+      toast({ title: "Successfully deleted" });
     }
   };
 

@@ -44,7 +44,7 @@ const CreateProject = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
           setError(result.error);
         } else {
           // Invalidate and refetch the query
-          queryClient.invalidateQueries({ queryKey: ["get-projects"] });
+          await queryClient.invalidateQueries({ queryKey: ["get-projects"] });
           toast({
             title: "Project Created Successfully",
           });

@@ -31,14 +31,14 @@ const page = () => {
 
       {isPending ? (
         <ProjectSkeleton />
-      ) : data ? (
+      ) : data && data?.length > 0 ? (
         <div className="flex flex-wrap justify-center mt-4 gap-4">
           {data.map((project) => (
-            <Project project={project} />
+            <Project key={project.id} project={project} />
           ))}
         </div>
       ) : (
-        <div>
+        <div className="flex items-center justify-center min-h-[80vh] flex-col gap-4">
           <p>Current you don't have any Projects.</p>
           <ProjectDialog />
         </div>
