@@ -78,9 +78,9 @@ const page = ({ params }: PageProps) => {
 
   return (
     <ProjectProvider value={id}>
-      <MaxWidthContainer>
+      <MaxWidthContainer classname="flex gap-2 flex-col">
         <header className="flex justify-between">
-          <h1>{project.name}</h1>
+          <h1 className="font-bold text-xl text-center">{project.name}</h1>
           <div className="flex items-center gap-1">
             {/* Add New member */}
             <Dialog open={open} onOpenChange={setOpen}>
@@ -103,7 +103,7 @@ const page = ({ params }: PageProps) => {
         </header>
 
         <DndContext onDragEnd={handleDragEnd}>
-          <main className="flex gap-2">
+          <main className="flex flex-wrap gap-6 justify-center">
             <Droppable id={TaskStatus.ToDo} label="To Do" />
             <Droppable id={TaskStatus.Ongoing} label="Ongoing" />
             <Droppable id={TaskStatus.Completed} label="Completed" />

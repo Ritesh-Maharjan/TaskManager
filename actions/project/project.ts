@@ -169,3 +169,77 @@ export const acceptInvite = async (id: string, userId: string) => {
     return { error: "Something went wrong, Please try again later" };
   }
 };
+
+export const updateProjectById = async (
+  id: string,
+  values: z.infer<typeof ProjectSchema>
+) => {
+  const validatedFields = ProjectSchema.safeParse(values);
+
+  if (!validatedFields.success) {
+    // If validation is unsuccessful,
+    return { error: "Invalid fields" };
+  }
+
+  const { name } = validatedFields.data;
+
+  try {
+    await db.project.update({
+      data: {
+        name,
+      },
+      where: {
+        id,
+      },
+    });
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === "P2002") {
+        // Unique constraint failed error code
+        return {
+          error: "A project with this name already exists for this user.",
+        };
+      } else {
+        return {
+          error: "An unexpected error occurred, Please try again later!!",
+        };
+      }
+    } else {
+      return {
+        error: "An unexpected error occurred, Please try again later!!",
+      };
+    }
+  }
+};
+
+export const deleteProjectById = async (id: string) => {
+  try {
+    await db.$transaction([
+      db.tasks.deleteMany({
+        where: {
+          projectId: id,
+        },
+      }),
+      db.projectMembers.deleteMany({
+        where: {
+          projectId: id,
+        },
+      }),
+      db.invitation.deleteMany({
+        where: {
+          projectId: id,
+        },
+      }),
+      db.project.delete({
+        where: {
+          id
+        },
+      }),
+    ]);
+  } catch (err) {
+    console.log(err);
+    return {
+      error: "An unexpected error occurred, Please try again later!!",
+    };
+  }
+};

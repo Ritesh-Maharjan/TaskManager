@@ -31,13 +31,14 @@ function Droppable({ id, label }: { id: TaskStatus; label: string }) {
   });
 
   return (
-    <div className="bg-red-400 min-h-96 min-w-64 p-2" ref={setNodeRef}>
-      <h2>{label}</h2>
-      <div className="bg-gray-500 flex flex-col gap-2 rounded-md p-4">
+    <div
+      className="bg-gray-200 min-h-96 min-w-64 p-4 rounded-lg flex flex-col gap-4"
+      ref={setNodeRef}
+    >
+      <h2 className="text-lg font-medium">{label}</h2>
+      <div className="bg-gray-400 flex flex-col gap-2 rounded-md p-4">
         {data?.map((el) => {
-          return (
-            <Draggable key={el.id} task={el} />
-          );
+          return <Draggable key={el.id} task={el} />;
         })}
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger className={buttonVariants({ variant: "ghost" })}>
