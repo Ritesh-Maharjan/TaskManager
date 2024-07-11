@@ -26,6 +26,14 @@ export const createProject = async (
       data: {
         name,
         userId: user.id,
+        ProjectMembers: {
+          create: [
+            {
+              userId: user.id,
+              role: "ADMIN",
+            },
+          ],
+        },
       },
     });
   } catch (err) {
@@ -232,7 +240,7 @@ export const deleteProjectById = async (id: string) => {
       }),
       db.project.delete({
         where: {
-          id
+          id,
         },
       }),
     ]);

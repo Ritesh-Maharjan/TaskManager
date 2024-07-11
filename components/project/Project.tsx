@@ -62,7 +62,7 @@ const Project = ({ project }: { project: Project }) => {
   };
 
   return (
-    <Link key={project.id} href={`project/${project.id}`}>
+    <Link href={`project/${project.id}`}>
       <Card className="hover:shadow-lg cursor-pointer w-72" key={project.id}>
         <CardHeader>
           {editStatus ? (

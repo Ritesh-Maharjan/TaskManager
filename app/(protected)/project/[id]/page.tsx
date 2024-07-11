@@ -98,7 +98,7 @@ const page = ({ params }: PageProps) => {
                 <AddMember setOpen={setOpen} />
               </DialogContent>
             </Dialog>
-            {(project?._count.ProjectMembers ?? 0) + 1} Members
+            {project?._count.ProjectMembers ?? 0} Members
           </div>
         </header>
 
