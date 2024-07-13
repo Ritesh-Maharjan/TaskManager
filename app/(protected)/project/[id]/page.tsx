@@ -3,7 +3,14 @@ import Droppable from "@/components/Droppable";
 import MaxWidthContainer from "@/components/MaxWidthContainer";
 import { PlusCircledIcon } from "@radix-ui/react-icons";
 import React, { act, useState } from "react";
-import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import {
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import { getProjectById } from "@/actions/project/project";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ProjectProvider } from "@/providers/ProjectProvider";
@@ -39,20 +46,22 @@ const page = ({ params }: PageProps) => {
 
     if (res) {
       // Invalidate and refetch the query
-      queryClient.invalidateQueries({
+      await queryClient.invalidateQueries({
         queryKey: ["get-task-by-ToDo"],
       });
-      queryClient.invalidateQueries({
+      await queryClient.invalidateQueries({
         queryKey: ["get-task-by-Ongoing"],
       });
-      queryClient.invalidateQueries({
+      await queryClient.invalidateQueries({
         queryKey: ["get-task-by-Completed"],
       });
-      queryClient.invalidateQueries({
+      await queryClient.invalidateQueries({
         queryKey: ["get-projects-by-id"],
       });
     }
   };
+
+  const sensors = useSensors(useSensor(PointerSensor), useSensor(TouchSensor));
 
   const {
     isPending,
@@ -102,11 +111,23 @@ const page = ({ params }: PageProps) => {
           </div>
         </header>
 
-        <DndContext onDragEnd={handleDragEnd}>
+        <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
           <main className="flex flex-wrap gap-6 justify-center">
-            <Droppable id={TaskStatus.ToDo} label="To Do" />
-            <Droppable id={TaskStatus.Ongoing} label="Ongoing" />
-            <Droppable id={TaskStatus.Completed} label="Completed" />
+            <Droppable
+              projectMembers={project.ProjectMembers}
+              id={TaskStatus.ToDo}
+              label="To Do"
+            />
+            <Droppable
+              projectMembers={project.ProjectMembers}
+              id={TaskStatus.Ongoing}
+              label="Ongoing"
+            />
+            <Droppable
+              projectMembers={project.ProjectMembers}
+              id={TaskStatus.Completed}
+              label="Completed"
+            />
           </main>
         </DndContext>
       </MaxWidthContainer>

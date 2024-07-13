@@ -1,7 +1,11 @@
 import { cn } from "@/lib/utils";
 import { useDraggable } from "@dnd-kit/core";
-import { TaskStatus } from "@prisma/client";
-import React from "react";
+import { MemberRole, TaskStatus } from "@prisma/client";
+import React, { MouseEvent, useState } from "react";
+import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
+import Tooltip from "./Tooltip";
+import { CheckIcon, Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
+import { UserRoundPlus } from "lucide-react";
 
 interface TaskProps {
   id: string;
@@ -12,10 +16,44 @@ interface TaskProps {
   createdAt: Date;
   updatedAt: Date;
 }
-const Draggable = ({ task }: { task: TaskProps }) => {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: task.id,
-  });
+
+interface ProjectMembers {
+  user: {
+    id: string;
+    name: string | null;
+    email: string;
+    emailVerified: Date | null;
+    image: string | null;
+    password: string;
+    createdAt: Date;
+    updatedAt: Date;
+  };
+  id: string;
+  projectId: string;
+  role: MemberRole;
+  invitedAt: Date;
+  joinedAt: Date;
+  userId: string;
+}
+
+const Draggable = ({
+  task,
+  projectMembers,
+}: {
+  task: TaskProps;
+  projectMembers: ProjectMembers[];
+}) => {
+  const [assign, setAssign] = useState(false);
+
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: task.id,
+    });
+
+  const assignTask = (member: ProjectMembers) => {
+    console.log(member);
+    setAssign(!assign);
+  };
 
   const style = transform
     ? {
@@ -24,16 +62,60 @@ const Draggable = ({ task }: { task: TaskProps }) => {
     : undefined;
 
   return (
-    <div
+    <Card
       ref={setNodeRef}
-      className={cn("border text-center p-2 rounded-sm", transform && "bg-green-300")}
+      className={cn(
+        "border text-center rounded-sm touch-none",
+        transform && "bg-green-300"
+      )}
       key={task.id}
       style={style}
-      {...listeners}
-      {...attributes}
     >
-      {task.title}
-    </div>
+      <CardContent {...listeners} {...attributes} className="p-2 cursor-grab">
+        {task.title}
+      </CardContent>
+
+      <hr className="h-0.5 bg-black/10 border-0" />
+
+      <CardFooter className="flex justify-between p-2">
+        <div className="relative">
+          <Tooltip text="Assign task">
+            <UserRoundPlus
+              onClick={() => setAssign(!assign)}
+              className="cursor-pointer"
+              height="20"
+              width="20"
+            />
+          </Tooltip>
+          {assign && (
+            <div className="absolute bg-black text-white flex flex-col w-36 z-10 rounded-lg">
+              <h3 className="border-b-2 p-2">Assign this task</h3>
+              {projectMembers.map((member) => (
+                <button
+                  onClick={() => assignTask(member)}
+                  className="p-2  hover:bg-green-300 pointer-events-auto z-50"
+                  key={member.id}
+                >
+                  {member.user.name}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="flex gap-2 ">
+          <Tooltip text="Save Changes">
+            <CheckIcon className="cursor-pointer" height="20" width="20" />
+          </Tooltip>
+          <Tooltip text="Edit Heading">
+            <Pencil1Icon className="cursor-pointer" height="20" width="20" />
+          </Tooltip>
+          <Tooltip text="Delete Project">
+            <TrashIcon className="cursor-pointer" height="20" width="20" />
+          </Tooltip>
+        </div>
+      </CardFooter>
+    </Card>
   );
 };
 

@@ -50,6 +50,12 @@ export const fetchTaskByStatus = async (
       },
     });
 
+    const projectMembers = await db.projectMembers.findMany({
+      where: {
+        projectId,
+      },
+    });
+
     return res;
   } catch (err) {
     console.log(err);

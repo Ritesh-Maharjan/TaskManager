@@ -95,6 +95,11 @@ export const getProjectById = async (id: string) => {
     },
     include: {
       Tasks: true,
+      ProjectMembers: {
+        include: {
+          user: true,
+        },
+      },
       _count: {
         select: {
           ProjectMembers: true,
