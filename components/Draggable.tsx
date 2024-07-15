@@ -6,6 +6,10 @@ import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 import Tooltip from "./Tooltip";
 import { CheckIcon, Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
 import { UserRoundPlus } from "lucide-react";
+import Avatar from "react-avatar";
+import { assignMemberToTask } from "@/actions/task/task";
+import { useToast } from "./ui/use-toast";
+import { QueryClient } from "@tanstack/react-query";
 
 interface TaskProps {
   id: string;
@@ -39,20 +43,38 @@ interface ProjectMembers {
 const Draggable = ({
   task,
   projectMembers,
+  taskStatus,
 }: {
   task: TaskProps;
   projectMembers: ProjectMembers[];
+  taskStatus: string;
 }) => {
   const [assign, setAssign] = useState(false);
+  const { toast } = useToast();
+  const queryClient = new QueryClient();
+  let assignedUser;
 
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id: task.id,
     });
 
-  const assignTask = (member: ProjectMembers) => {
-    console.log(member);
+  const assignTask = async (member: ProjectMembers) => {
     setAssign(!assign);
+    const result = await assignMemberToTask(task.id, member.id);
+
+    if ("error" in result) {
+      toast({
+        title: "Something went wrong, Please try again later",
+      });
+    } else {
+      await queryClient.invalidateQueries({
+        queryKey: [`get-task-by-${taskStatus}`],
+      });
+      toast({
+        title: `Assigned this task to ${member.user.name}`,
+      });
+    }
   };
 
   const style = transform
@@ -60,6 +82,12 @@ const Draggable = ({
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
       }
     : undefined;
+
+  if (task.projectMembersId) {
+    assignedUser = projectMembers.find(
+      (projectMember) => projectMember.id === task.projectMembersId
+    );
+  }
 
   return (
     <Card
@@ -80,12 +108,21 @@ const Draggable = ({
       <CardFooter className="flex justify-between p-2">
         <div className="relative">
           <Tooltip text="Assign task">
-            <UserRoundPlus
-              onClick={() => setAssign(!assign)}
-              className="cursor-pointer"
-              height="20"
-              width="20"
-            />
+            {assignedUser ? (
+              <Avatar
+                onClick={() => setAssign(!assign)}
+                className="rounded-full cursor-pointer"
+                size="22"
+                name={assignedUser.user.name ?? "User"}
+              />
+            ) : (
+              <UserRoundPlus
+                onClick={() => setAssign(!assign)}
+                className="cursor-pointer"
+                height="20"
+                width="20"
+              />
+            )}
           </Tooltip>
           {assign && (
             <div className="absolute bg-black text-white flex flex-col w-36 z-10 rounded-lg">

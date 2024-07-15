@@ -80,3 +80,21 @@ export const updateTask = async (id: string, status: TaskStatus) => {
     return null;
   }
 };
+
+export const assignMemberToTask = async (taskId: string, userId: string) => {
+  try {
+    const res = await db.tasks.update({
+      where: {
+        id: taskId,
+      },
+      data: {
+        projectMembersId: userId,
+      },
+    });
+
+    return res;
+  } catch (err) {
+    console.log(err);
+    return { error: "Something went wrong, Please try again later" };
+  }
+};

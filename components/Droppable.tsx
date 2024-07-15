@@ -66,7 +66,7 @@ function Droppable({
       <div className="bg-gray-400 flex flex-col gap-2 rounded-md p-4">
         {data?.map((el) => {
           return (
-            <Draggable projectMembers={projectMembers} key={el.id} task={el} />
+            <Draggable projectMembers={projectMembers} key={el.id} task={el} taskStatus={id} />
           );
         })}
         <Dialog open={open} onOpenChange={setOpen}>
