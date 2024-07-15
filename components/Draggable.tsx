@@ -1,15 +1,16 @@
 import { cn } from "@/lib/utils";
 import { useDraggable } from "@dnd-kit/core";
 import { MemberRole, TaskStatus } from "@prisma/client";
-import React, { MouseEvent, useState } from "react";
-import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
+import React, { useRef, useState } from "react";
+import { Card, CardContent, CardFooter } from "./ui/card";
 import Tooltip from "./Tooltip";
 import { CheckIcon, Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
 import { UserRoundPlus } from "lucide-react";
 import Avatar from "react-avatar";
-import { assignMemberToTask } from "@/actions/task/task";
+import { assignMemberToTask, deleteTaskById } from "@/actions/task/task";
 import { useToast } from "./ui/use-toast";
 import { QueryClient } from "@tanstack/react-query";
+import UpdateTask from "./form/UpdateTask";
 
 interface TaskProps {
   id: string;
@@ -40,6 +41,11 @@ interface ProjectMembers {
   userId: string;
 }
 
+// Define ref type
+interface ChildFormRef {
+  submitForm: () => void;
+}
+
 const Draggable = ({
   task,
   projectMembers,
@@ -50,6 +56,8 @@ const Draggable = ({
   taskStatus: string;
 }) => {
   const [assign, setAssign] = useState(false);
+  const [editStatus, setEditStatus] = useState(false);
+  const ref = useRef<ChildFormRef>(null);
   const { toast } = useToast();
   const queryClient = new QueryClient();
   let assignedUser;
@@ -89,6 +97,26 @@ const Draggable = ({
     );
   }
 
+  const saveChanges = () => {
+    setEditStatus(false);
+    if (ref.current) {
+      ref.current.submitForm();
+    }
+  };
+
+  const deleteTask = async () => {
+    const result = await deleteTaskById(task.id);
+
+    if (result?.error) {
+      toast({ title: "Something went wrong, Please try agian later" });
+    } else {
+      toast({ title: "Toast deleted successfully" });
+      await queryClient.invalidateQueries({
+        queryKey: [`get-task-by-${taskStatus}`],
+      });
+    }
+  };
+
   return (
     <Card
       ref={setNodeRef}
@@ -100,7 +128,17 @@ const Draggable = ({
       style={style}
     >
       <CardContent {...listeners} {...attributes} className="p-2 cursor-grab">
-        {task.title}
+        {editStatus ? (
+          <UpdateTask
+            id={task.id}
+            title={task.title}
+            taskStatus={taskStatus}
+            setEditStatus={setEditStatus}
+            ref={ref}
+          />
+        ) : (
+          <h3>{task.title}</h3>
+        )}
       </CardContent>
 
       <hr className="h-0.5 bg-black/10 border-0" />
@@ -141,14 +179,32 @@ const Draggable = ({
         </div>
 
         <div className="flex gap-2 ">
-          <Tooltip text="Save Changes">
-            <CheckIcon className="cursor-pointer" height="20" width="20" />
-          </Tooltip>
-          <Tooltip text="Edit Heading">
-            <Pencil1Icon className="cursor-pointer" height="20" width="20" />
-          </Tooltip>
+          {editStatus ? (
+            <Tooltip text="Save Changes">
+              <CheckIcon
+                onClick={saveChanges}
+                className="cursor-pointer"
+                height="20"
+                width="20"
+              />
+            </Tooltip>
+          ) : (
+            <Tooltip text="Edit Heading">
+              <Pencil1Icon
+                onClick={() => setEditStatus(true)}
+                className="cursor-pointer"
+                height="20"
+                width="20"
+              />
+            </Tooltip>
+          )}
           <Tooltip text="Delete Project">
-            <TrashIcon className="cursor-pointer" height="20" width="20" />
+            <TrashIcon
+              onClick={deleteTask}
+              className="cursor-pointer"
+              height="20"
+              width="20"
+            />
           </Tooltip>
         </div>
       </CardFooter>

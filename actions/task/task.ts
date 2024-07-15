@@ -98,3 +98,44 @@ export const assignMemberToTask = async (taskId: string, userId: string) => {
     return { error: "Something went wrong, Please try again later" };
   }
 };
+
+export const updateTaskTitle = async (
+  taskId: string,
+  values: z.infer<typeof TaskSchema>
+) => {
+  const validatedFields = TaskSchema.safeParse(values);
+
+  if (!validatedFields.success) {
+    // If validation is unsuccessful,
+    return { error: "Invalid fields" };
+  }
+
+  const { title } = validatedFields.data;
+
+  try {
+    const res = await db.tasks.update({
+      where: {
+        id: taskId,
+      },
+      data: {
+        title,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+    return { error: "SOmething went wrong, Please try again later" };
+  }
+};
+
+export const deleteTaskById = async (id: string) => {
+  try {
+    await db.tasks.delete({
+      where: {
+        id,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+    return { error: "Something went wrong, Please try again later." };
+  }
+};
