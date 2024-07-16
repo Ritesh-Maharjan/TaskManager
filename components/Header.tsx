@@ -32,11 +32,11 @@ const Header = () => {
             <DropdownMenuContent>
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Link href="/project">Project</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>Billing</DropdownMenuItem>
-              <DropdownMenuItem>Team</DropdownMenuItem>
+              <Link href="/project">
+                <DropdownMenuItem className="cursor-pointer">
+                  Project
+                </DropdownMenuItem>
+              </Link>
               <DropdownMenuItem onClick={signout}>Sign Out</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
