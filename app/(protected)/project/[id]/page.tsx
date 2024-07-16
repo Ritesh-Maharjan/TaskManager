@@ -24,6 +24,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import AddMember from "@/components/form/AddMember";
+import IndividualProjectSkeleton from "@/components/loading/IndividualProjectSkeleton";
+import ProjectSkeleton from "@/components/loading/ProjectSkeleton";
 
 type PageProps = {
   params: { id: string };
@@ -78,7 +80,7 @@ const page = ({ params }: PageProps) => {
     return <div>Errors</div>;
   }
   if (isPending) {
-    return <div>Loading...</div>;
+    return <IndividualProjectSkeleton />;
   }
 
   if (!project) {

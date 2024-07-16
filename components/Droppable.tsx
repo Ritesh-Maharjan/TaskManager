@@ -15,6 +15,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchTaskByStatus } from "@/actions/task/task";
 import { useProject } from "@/providers/ProjectProvider";
 import Draggable from "./Draggable";
+import DroppableSkeleteon from "./loading/DroppableSkeleteon";
 
 interface ProjectMembers {
   user: {
@@ -57,16 +58,25 @@ function Droppable({
     retryDelay: 500,
   });
 
+  if (isPending) {
+    return <DroppableSkeleteon />;
+  }
+
   return (
     <div
-      className="bg-gray-200 min-h-96 min-w-64 p-4 rounded-lg flex flex-col gap-4"
+      className="bg-gray-200 min-h-96 w-64 p-4 rounded-lg flex flex-col gap-4"
       ref={setNodeRef}
     >
       <h2 className="text-lg font-medium">{label}</h2>
       <div className="bg-gray-400 flex flex-col gap-2 rounded-md p-4">
         {data?.map((el) => {
           return (
-            <Draggable projectMembers={projectMembers} key={el.id} task={el} taskStatus={id} />
+            <Draggable
+              projectMembers={projectMembers}
+              key={el.id}
+              task={el}
+              taskStatus={id}
+            />
           );
         })}
         <Dialog open={open} onOpenChange={setOpen}>
