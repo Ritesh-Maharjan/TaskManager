@@ -104,7 +104,7 @@ const page = ({ params }: PageProps) => {
                 </div>
               </DialogTrigger>
               <DialogContent>
-                <DialogTitle>Create Project</DialogTitle>
+                <DialogTitle>Invite Memeber</DialogTitle>
                 <DialogDescription className="sr-only"></DialogDescription>
                 <AddMember setOpen={setOpen} />
               </DialogContent>

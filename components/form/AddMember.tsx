@@ -64,11 +64,11 @@ const AddMember = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Title</FormLabel>
+              <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input
                   type="email"
-                  placeholder="Enter member email"
+                  placeholder="Enter email"
                   {...field}
                 />
               </FormControl>
@@ -77,7 +77,7 @@ const AddMember = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
           )}
         />
         <Button disabled={isPending} type="submit">
-          Create
+          Invite
         </Button>
         {error && <p className="text-destructive">{error}</p>}
       </form>
