@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import React from "react";
 
-const page = async ({ params }: any) => {
+const Page = async ({ params }: any) => {
   const { id } = params;
   if (!id) {
     return <div>No token provided</div>;
@@ -55,4 +55,4 @@ const page = async ({ params }: any) => {
   }
 };
 
-export default page;
+export default Page;

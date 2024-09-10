@@ -29,7 +29,7 @@ import IndividualProjectSkeleton from "@/components/loading/IndividualProjectSke
 type PageProps = {
   params: { id: string };
 };
-const page = ({ params }: PageProps) => {
+const Page = ({ params }: PageProps) => {
   const { id } = params;
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
@@ -137,4 +137,4 @@ const page = ({ params }: PageProps) => {
   );
 };
 
-export default page;
+export default Page;

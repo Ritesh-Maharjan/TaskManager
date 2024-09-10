@@ -8,7 +8,7 @@ import { useSession } from "@/providers/SessionProvider";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
-const page = () => {
+const Page = () => {
   const user = useSession().user!;
 
   const { isPending, error, data } = useQuery({
@@ -45,4 +45,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
