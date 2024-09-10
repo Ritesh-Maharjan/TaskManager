@@ -42,7 +42,6 @@ const UpdateTask = React.forwardRef<ChildFormRef, UpdateTaskProps>(
     });
 
     function onSubmit(values: z.infer<typeof TaskSchema>) {
-      console.log(values);
       startTransition(async () => {
         const result = await updateTaskTitle(id, values);
         if (result?.error) {
