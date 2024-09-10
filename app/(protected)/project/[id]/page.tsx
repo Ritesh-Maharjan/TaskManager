@@ -2,7 +2,7 @@
 import Droppable from "@/components/Droppable";
 import MaxWidthContainer from "@/components/MaxWidthContainer";
 import { PlusCircledIcon } from "@radix-ui/react-icons";
-import React, { act, useState } from "react";
+import React, { useState } from "react";
 import {
   DndContext,
   DragEndEvent,
@@ -15,7 +15,7 @@ import { getProjectById } from "@/actions/project/project";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ProjectProvider } from "@/providers/ProjectProvider";
 import { updateTask } from "@/actions/task/task";
-import { TaskStatus } from "@prisma/client";
+import { Tasks, TaskStatus } from "@prisma/client";
 import {
   Dialog,
   DialogContent,
@@ -25,7 +25,6 @@ import {
 } from "@/components/ui/dialog";
 import AddMember from "@/components/form/AddMember";
 import IndividualProjectSkeleton from "@/components/loading/IndividualProjectSkeleton";
-import ProjectSkeleton from "@/components/loading/ProjectSkeleton";
 
 type PageProps = {
   params: { id: string };
@@ -86,6 +85,7 @@ const page = ({ params }: PageProps) => {
   if (!project) {
     return <div>No project</div>;
   }
+
 
   return (
     <ProjectProvider value={id}>

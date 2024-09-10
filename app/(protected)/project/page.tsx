@@ -4,10 +4,8 @@ import ProjectSkeleton from "@/components/loading/ProjectSkeleton";
 import MaxWidthContainer from "@/components/MaxWidthContainer";
 import Project from "@/components/project/Project";
 import ProjectDialog from "@/components/project/ProjectDialog";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useSession } from "@/providers/SessionProvider";
 import { useQuery } from "@tanstack/react-query";
-import Link from "next/link";
 import React from "react";
 
 const page = () => {
