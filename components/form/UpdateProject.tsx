@@ -98,4 +98,8 @@ const UpdateProject = forwardRef<ChildFormRef, ChildFormProps>(
   }
 );
 
+
+// Assign display name
+UpdateProject.displayName = "UpdateProject";
+
 export default UpdateProject;

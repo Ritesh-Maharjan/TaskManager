@@ -92,4 +92,8 @@ const UpdateTask = React.forwardRef<ChildFormRef, UpdateTaskProps>(
   }
 );
 
+
+// Assign display name
+UpdateTask.displayName = "UpdateTask";
+
 export default UpdateTask;

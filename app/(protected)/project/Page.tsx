@@ -37,7 +37,7 @@ const Page = () => {
         </div>
       ) : (
         <div className="flex items-center justify-center min-h-[80vh] flex-col gap-4">
-          <p>Current you don't have any Projects.</p>
+          <p>Current you don`&apos;`t have any Projects.</p>
           <ProjectDialog />
         </div>
       )}
