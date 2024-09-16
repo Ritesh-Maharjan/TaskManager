@@ -150,7 +150,7 @@ export const addMember = async (
       ...mailOptions,
       to: email,
       subject: "Invitation to a task management project",
-      text: "Big D*ck Will!am",
+      text: "Invited to work on a project together",
       html: `<h1>You have been invited to work on a project together</h1> 
       <p>Please click <a href="http://localhost:3000/project/invite/${token}">this</a> to view invitation.</p>`,
     });
